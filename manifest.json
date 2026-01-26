@@ -1,0 +1,18 @@
+{
+  "name": "الإنماء المهني - مدرسة العوتبي",
+  "short_name": "الإنماء المهني",
+  "description": "تسجيل بيانات الإنماء المهني - مدرسة العوتبي",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#1abc9c",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "الانماء المهني.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
