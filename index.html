@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>الإنماء المهني - مدرسة العوتبي</title>
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 
-  <!-- خط عربي -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -33,19 +31,22 @@
       padding: 20px;
     }
 
-    .header {
+    header {
       text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header div {
       font-weight: 700;
-      line-height: 1.8;
-      color: #2c3e50;
-      margin-bottom: 15px;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
     h1 {
       text-align: center;
       font-size: 18px;
-      margin-bottom: 20px;
-      color: #1abc9c;
+      margin: 15px 0 20px;
+      color: #2c3e50;
     }
 
     label {
@@ -71,48 +72,101 @@
       min-height: 70px;
     }
 
+    .buttons {
+      display: flex;
+      gap: 10px;
+    }
+
     button {
-      width: 100%;
+      flex: 1;
       padding: 12px;
       background: #1abc9c;
       color: #fff;
       border: none;
       border-radius: 10px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
     }
 
-    button:hover {
-      background: #16a085;
+    button.secondary {
+      background: #3498db;
     }
 
-    .warning {
+    button:hover {
+      opacity: 0.9;
+    }
+
+    /* ===== Modal ===== */
+    .modal {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
       display: none;
-      font-size: 13px;
-      color: #e67e22;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 14px;
+      padding: 15px;
+    }
+
+    .modal-content h3 {
+      text-align: center;
       margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      text-align: center;
+    }
+
+    th {
+      background: #f1f1f1;
+    }
+
+    .close-btn {
+      margin-top: 10px;
+      background: #e74c3c;
+    }
+
+    #otherPlace {
+      display: none;
     }
   </style>
 </head>
+
 <body>
 
 <div class="app">
 
-  <div class="header">
-    سلطنة عمان<br>
-    وزارة التعليم<br>
-    مدرسة العوتبي للتعليم الأساسي
-  </div>
+  <header>
+    <div>سلطنة عمان</div>
+    <div>وزارة التعليم</div>
+    <div>مدرسة العوتبي للتعليم الأساسي</div>
+  </header>
 
   <h1>سجل الإنماء المهني</h1>
 
   <label>التاريخ</label>
-  <input type="date" id="date" required>
+  <input type="date">
 
   <label>الحصة</label>
-  <select id="session" required>
-    <option value="">اختر الحصة</option>
+  <select>
     <option>الأولى</option>
     <option>الثانية</option>
     <option>الثالثة</option>
@@ -125,106 +179,85 @@
   </select>
 
   <label>اسم الموظف / المعلم</label>
-  <input type="text" id="name" required>
+  <input type="text">
 
   <label>المسمى الوظيفي</label>
-  <input type="text" id="job" required>
+  <input type="text">
 
   <label>الموضوع</label>
-  <input type="text" id="topic" required>
+  <input type="text">
 
   <label>مكان التنفيذ</label>
-  <select id="place" onchange="handlePlace()" required>
+  <select id="placeSelect" onchange="toggleOtherPlace()">
     <option value="">اختر المكان</option>
     <option>قاعة العوتبي</option>
     <option>مختبر الحاسوب</option>
     <option>قاعة المهارات الحياتية</option>
     <option>قاعة التوجيه المهني</option>
     <option>مركز مصادر التعلم</option>
-    <option>مختبر العلوم</option>
-    <option value="other">أخرى...</option>
+    <option value="other">أخرى</option>
   </select>
 
-  <input type="text" id="otherPlace" placeholder="اكتب اسم القاعة" style="display:none">
-
-  <div class="warning" id="warning">
-    ⚠️ تم حجز المكان مسبقًا
-  </div>
+  <input
+    type="text"
+    id="otherPlace"
+    placeholder="اكتب مكان التنفيذ"
+  >
 
   <label>الفئة المستهدفة</label>
-  <input type="text" id="target" required>
+  <input type="text">
 
-  <label>ملاحظات (اختياري)</label>
-  <textarea id="notes"></textarea>
+  <label>ملاحظات</label>
+  <textarea></textarea>
 
-  <button onclick="saveData()">حفظ البيانات</button>
+  <div class="buttons">
+    <button>تسجيل البيانات</button>
+    <button class="secondary" onclick="openModal()">حجوزات اليوم</button>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>حجوزات اليوم</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>المعلم</th>
+          <th>الحصة</th>
+          <th>المكان</th>
+        </tr>
+      </thead>
+      <tbody id="reservations">
+        <tr>
+          <td colspan="3">سيتم تحميل البيانات...</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button class="close-btn" onclick="closeModal()">إغلاق</button>
+  </div>
 </div>
 
 <script>
-  // Service Worker
+  function toggleOtherPlace() {
+    const select = document.getElementById('placeSelect');
+    const other = document.getElementById('otherPlace');
+    other.style.display = select.value === 'other' ? 'block' : 'none';
+  }
+
+  function openModal() {
+    document.getElementById('modal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+  }
+
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
-  }
-
-  // تعيين تاريخ اليوم تلقائيًا
-  document.getElementById('date').valueAsDate = new Date();
-
-  function handlePlace() {
-    const place = document.getElementById('place').value;
-    const other = document.getElementById('otherPlace');
-    const warning = document.getElementById('warning');
-
-    other.style.display = 'none';
-    warning.style.display = 'none';
-
-    if (place === 'other') {
-      other.style.display = 'block';
-    }
-
-    // منطق شكلي للحجز (سيتحول لحقيقي في المرحلة الثامنة)
-    if (place === 'قاعة العوتبي') {
-      warning.style.display = 'block';
-    }
-  }
-
-  const API_URL = 'https://script.google.com/macros/s/AKfycbxlmaxC_WeeuAR11VWGzsq6pMdAoXQY2RX79OfNRv-mx7ZRaGHt3JVjb1vAVefEMHJBgw/exec';
-
-  function saveData() {
-    const required = ['date','session','name','job','topic','place','target'];
-    for (let id of required) {
-      if (!document.getElementById(id).value) {
-        alert('❌ يرجى تعبئة جميع الحقول الإلزامية');
-        return;
-      }
-    }
-
-    const placeValue =
-      place.value === 'other' ? otherPlace.value : place.value;
-
-    const data = {
-      date: date.value,
-      session: session.value,
-      name: name.value,
-      job: job.value,
-      topic: topic.value,
-      place: placeValue,
-      target: target.value,
-      notes: notes.value
-    };
-
-    fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    })
-    .then(r => r.json())
-    .then(res => {
-      if (res.success) {
-        alert('✅ تم حفظ البيانات بنجاح');
-        location.reload();
-      } else {
-        alert('❌ حدث خطأ أثناء الحفظ');
-      }
-    });
   }
 </script>
 
