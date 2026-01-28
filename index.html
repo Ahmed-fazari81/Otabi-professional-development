@@ -298,6 +298,15 @@
     navigator.serviceWorker.register('sw.js');
   }
 </script>
+<script>
+  // تعبئة تاريخ اليوم تلقائيًا مع إمكانية التغيير
+  document.addEventListener('DOMContentLoaded', function () {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').value = today;
+  });
+</script>
+</body>
+</html>
 
 </body>
 </html>
