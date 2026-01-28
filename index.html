@@ -34,9 +34,6 @@
     header {
       text-align: center;
       margin-bottom: 20px;
-    }
-
-    header div {
       font-weight: 700;
       font-size: 14px;
       line-height: 1.6;
@@ -45,7 +42,7 @@
     h1 {
       text-align: center;
       font-size: 18px;
-      margin: 15px 0 20px;
+      margin: 10px 0 20px;
       color: #2c3e50;
     }
 
@@ -97,13 +94,10 @@
       opacity: 0.9;
     }
 
-    /* ===== Modal ===== */
+    /* Modal */
     .modal {
       position: fixed;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
+      inset: 0;
       background: rgba(0,0,0,0.5);
       display: none;
       justify-content: center;
@@ -116,11 +110,6 @@
       max-width: 400px;
       border-radius: 14px;
       padding: 15px;
-    }
-
-    .modal-content h3 {
-      text-align: center;
-      margin-bottom: 10px;
     }
 
     table {
@@ -163,10 +152,10 @@
   <h1>سجل الإنماء المهني</h1>
 
   <label>التاريخ</label>
-  <input type="date">
+  <input type="date" id="date">
 
   <label>الحصة</label>
-  <select>
+  <select id="session">
     <option>الأولى</option>
     <option>الثانية</option>
     <option>الثالثة</option>
@@ -179,13 +168,13 @@
   </select>
 
   <label>اسم الموظف / المعلم</label>
-  <input type="text">
+  <input type="text" id="name">
 
   <label>المسمى الوظيفي</label>
-  <input type="text">
+  <input type="text" id="job">
 
   <label>الموضوع</label>
-  <input type="text">
+  <input type="text" id="topic">
 
   <label>مكان التنفيذ</label>
   <select id="placeSelect" onchange="toggleOtherPlace()">
@@ -198,20 +187,16 @@
     <option value="other">أخرى</option>
   </select>
 
-  <input
-    type="text"
-    id="otherPlace"
-    placeholder="اكتب مكان التنفيذ"
-  >
+  <input type="text" id="otherPlace" placeholder="اكتب مكان التنفيذ">
 
   <label>الفئة المستهدفة</label>
-  <input type="text">
+  <input type="text" id="target">
 
   <label>ملاحظات</label>
-  <textarea></textarea>
+  <textarea id="notes"></textarea>
 
   <div class="buttons">
-    <button>تسجيل البيانات</button>
+    <button onclick="submitData()">تسجيل البيانات</button>
     <button class="secondary" onclick="openModal()">حجوزات اليوم</button>
   </div>
 
@@ -220,8 +205,7 @@
 <!-- Modal -->
 <div class="modal" id="modal">
   <div class="modal-content">
-    <h3>حجوزات اليوم</h3>
-
+    <h3 style="text-align:center">حجوزات اليوم</h3>
     <table>
       <thead>
         <tr>
@@ -231,29 +215,83 @@
         </tr>
       </thead>
       <tbody id="reservations">
-        <tr>
-          <td colspan="3">سيتم تحميل البيانات...</td>
-        </tr>
+        <tr><td colspan="3">جاري التحميل...</td></tr>
       </tbody>
     </table>
-
     <button class="close-btn" onclick="closeModal()">إغلاق</button>
   </div>
 </div>
 
 <script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlmaxC_WeeuAR11VWGzsq6pMdAoXQY2RX79OfNRv-mx7ZRaGHt3JVjb1vAVefEMHJBgw/exec';
+
   function toggleOtherPlace() {
     const select = document.getElementById('placeSelect');
     const other = document.getElementById('otherPlace');
     other.style.display = select.value === 'other' ? 'block' : 'none';
   }
 
+  function submitData() {
+    const placeSelect = document.getElementById('placeSelect');
+    const place = placeSelect.value === 'other'
+      ? document.getElementById('otherPlace').value
+      : placeSelect.value;
+
+    const payload = {
+      date: document.getElementById('date').value,
+      session: document.getElementById('session').value,
+      name: document.getElementById('name').value,
+      job: document.getElementById('job').value,
+      topic: document.getElementById('topic').value,
+      place: place,
+      target: document.getElementById('target').value,
+      notes: document.getElementById('notes').value
+    };
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res.conflict) {
+        alert(res.message);
+      } else if (res.success) {
+        alert('تم حفظ البيانات بنجاح');
+      }
+    })
+    .catch(err => console.error(err));
+  }
+
   function openModal() {
     document.getElementById('modal').style.display = 'flex';
+    loadTodayReservations();
   }
 
   function closeModal() {
     document.getElementById('modal').style.display = 'none';
+  }
+
+  function loadTodayReservations() {
+    const tbody = document.getElementById('reservations');
+    tbody.innerHTML = '<tr><td colspan="3">جاري التحميل...</td></tr>';
+
+    fetch(`${SCRIPT_URL}?action=today`)
+      .then(res => res.json())
+      .then(res => {
+        if (!res.success || res.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3">لا توجد حجوزات اليوم</td></tr>';
+          return;
+        }
+        tbody.innerHTML = '';
+        res.data.forEach(r => {
+          tbody.innerHTML += `<tr><td>${r.name}</td><td>${r.session}</td><td>${r.place}</td></tr>`;
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="3">حدث خطأ</td></tr>';
+      });
   }
 
   if ('serviceWorker' in navigator) {
