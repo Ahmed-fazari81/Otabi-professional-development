@@ -94,10 +94,6 @@
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
     }
 
-    input:required:invalid:not(:placeholder-shown) {
-      border-color: #e74c3c;
-    }
-
     textarea {
       resize: vertical;
       min-height: 80px;
@@ -141,7 +137,12 @@
       box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
     }
 
-    /* إشعارات */
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
     #notification {
       display: none;
       padding: 15px;
@@ -181,7 +182,6 @@
       border: 1px solid #ffeaa7;
     }
 
-    /* Modal */
     .modal {
       position: fixed;
       inset: 0;
@@ -285,7 +285,6 @@
       to { opacity: 1; }
     }
 
-    /* مؤشر التحميل */
     .loading {
       display: inline-block;
       width: 20px;
@@ -301,7 +300,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* حقول إجبارية */
     .required::after {
       content: ' *';
       color: #e74c3c;
@@ -335,7 +333,6 @@
 
   <h1>سجل الإنماء المهني</h1>
 
-  <!-- إشعارات -->
   <div id="notification"></div>
 
   <label class="required">التاريخ</label>
@@ -390,7 +387,6 @@
 
 </div>
 
-<!-- Modal -->
 <div class="modal" id="modal" onclick="closeModalOutside(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -406,7 +402,7 @@
         </tr>
       </thead>
       <tbody id="reservations">
-        <tr><td colspan="3" class="empty-state"><div class="loading"></div><br>جاري التحميل...</td></tr>
+        <tr><td colspan="3" class="empty-state">⏳ جاري التحميل...</td></tr>
       </tbody>
     </table>
     <button class="close-btn" onclick="closeModal()">إغلاق</button>
@@ -417,12 +413,10 @@
   // ⚠️ استبدل هذا الرابط برابطك الفعلي من Google Apps Script
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlmaxC_WeeuAR11VWGzsq6pMdAoXQY2RX79OfNRv-mx7ZRaGHt3JVjb1vAVefEMHJBgw/exec';
 
-  // تعبئة تاريخ اليوم تلقائيًا
   document.addEventListener('DOMContentLoaded', function () {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('date').value = today;
     
-    // عرض تاريخ اليوم في الـ Modal
     const todayDisplay = new Date().toLocaleDateString('ar-OM', {
       weekday: 'long',
       year: 'numeric',
@@ -432,7 +426,6 @@
     document.getElementById('todayDate').textContent = todayDisplay;
   });
 
-  // إظهار/إخفاء حقل "أخرى"
   function toggleOtherPlace() {
     const select = document.getElementById('placeSelect');
     const other = document.getElementById('otherPlace');
@@ -446,7 +439,6 @@
     }
   }
 
-  // إظهار الإشعارات
   function showNotification(message, type) {
     const notif = document.getElementById('notification');
     notif.className = `notification-${type}`;
@@ -458,7 +450,6 @@
     }, 5000);
   }
 
-  // التحقق من الحقول
   function validateForm() {
     const requiredFields = [
       { id: 'date', name: 'التاريخ' },
@@ -493,7 +484,6 @@
     return true;
   }
 
-  // إرسال البيانات
   function submitData() {
     if (!validateForm()) return;
 
@@ -515,26 +505,44 @@
       notes: document.getElementById('notes').value.trim()
     };
 
-    // تأكيد قبل الحجز
     const confirmMessage = `هل أنت متأكد من حجز "${place}" في الحصة ${payload.session} بتاريخ ${payload.date}؟`;
     if (!confirm(confirmMessage)) return;
 
-    // تعطيل الزر أثناء الإرسال
     const btn = document.querySelector('button[onclick="submitData()"]');
     const originalText = btn.textContent;
     btn.disabled = true;
-    btn.innerHTML = '<div class="loading" style="width: 16px; height: 16px; border-width: 2px;"></div> جاري التسجيل...';
+    btn.innerHTML = '⏳ جاري التسجيل...';
+
+    console.log('Sending:', payload);
 
     fetch(SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: {
         'Content-Type': 'application/json'
-      },
-      mode: 'no-cors' // مهم لحل مشاكل CORS
+      }
     })
-    .then(res => res.json())
     .then(res => {
+      console.log('Response status:', res.status);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      return res.text();
+    })
+    .then(text => {
+      console.log('Raw response:', text);
+      
+      if (!text || text.trim() === '') {
+        throw new Error('Empty response from server');
+      }
+
+      let res;
+      try {
+        res = JSON.parse(text);
+      } catch (e) {
+        throw new Error('Invalid JSON: ' + text.substring(0, 100));
+      }
+
       btn.disabled = false;
       btn.textContent = originalText;
 
@@ -542,7 +550,6 @@
         showNotification(res.message, 'error');
       } else if (res.success) {
         showNotification('✅ تم حفظ البيانات بنجاح!', 'success');
-        // إعادة تعيين النموذج (ما عدا التاريخ)
         document.getElementById('session').value = '';
         document.getElementById('name').value = '';
         document.getElementById('job').value = '';
@@ -553,82 +560,93 @@
         document.getElementById('target').value = '';
         document.getElementById('notes').value = '';
       } else {
-        showNotification('❌ حدث خطأ: ' + (res.error || 'غير معروف'), 'error');
+        showNotification('❌ خطأ: ' + (res.error || 'غير معروف'), 'error');
       }
     })
     .catch(err => {
+      console.error('Fetch error:', err);
       btn.disabled = false;
       btn.textContent = originalText;
-      console.error('Error:', err);
-      showNotification('❌ فشل الاتصال بالخادم. تأكد من اتصال الإنترنت.', 'error');
+      showNotification('❌ فشل الاتصال: ' + err.message, 'error');
     });
   }
 
-  // فتح Modal
   function openModal() {
     document.getElementById('modal').style.display = 'flex';
     loadTodayReservations();
   }
 
-  // إغلاق Modal
   function closeModal() {
     document.getElementById('modal').style.display = 'none';
   }
 
-  // إغلاق Modal عند النقر خارج المحتوى
   function closeModalOutside(event) {
     if (event.target.id === 'modal') {
       closeModal();
     }
   }
 
-  // تحميل حجوزات اليوم
   function loadTodayReservations() {
     const tbody = document.getElementById('reservations');
-    tbody.innerHTML = '<tr><td colspan="3" class="empty-state"><div class="loading"></div><br>جاري التحميل...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" class="empty-state">⏳ جاري التحميل...</td></tr>';
 
-    fetch(`${SCRIPT_URL}?action=today`, {
-      method: 'GET',
-      mode: 'no-cors'
-    })
-    .then(res => res.json())
-    .then(res => {
-      console.log('Response:', res); // للتصحيح
-      
-      if (!res.success) {
-        tbody.innerHTML = `<tr><td colspan="3" class="empty-state">❌ خطأ: ${res.error || 'غير معروف'}</td></tr>`;
-        return;
-      }
-      
-      if (!res.data || res.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="empty-state">📭 لا توجد حجوزات لهذا اليوم</td></tr>';
-        return;
-      }
-      
-      // ترتيب الحجوزات حسب الحصة
-      const sessionOrder = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الفسحة', 'الخامسة', 'السادسة', 'السابعة', 'الثامنة'];
-      res.data.sort((a, b) => {
-        return sessionOrder.indexOf(a.session) - sessionOrder.indexOf(b.session);
+    const url = `${SCRIPT_URL}?action=today`;
+    console.log('Fetching:', url);
+
+    fetch(url)
+      .then(res => {
+        console.log('Response status:', res.status);
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        return res.text();
+      })
+      .then(text => {
+        console.log('Raw response:', text);
+        
+        if (!text || text.trim() === '') {
+          throw new Error('Empty response from server');
+        }
+
+        let res;
+        try {
+          res = JSON.parse(text);
+        } catch (e) {
+          throw new Error('Invalid JSON: ' + text.substring(0, 100));
+        }
+        
+        if (!res.success) {
+          tbody.innerHTML = `<tr><td colspan="3" class="empty-state">❌ خطأ: ${res.error || 'غير معروف'}</td></tr>`;
+          return;
+        }
+        
+        if (!res.data || res.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" class="empty-state">📭 لا توجد حجوزات لهذا اليوم</td></tr>';
+          return;
+        }
+        
+        const sessionOrder = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الفسحة', 'الخامسة', 'السادسة', 'السابعة', 'الثامنة'];
+        res.data.sort((a, b) => {
+          return sessionOrder.indexOf(a.session) - sessionOrder.indexOf(b.session);
+        });
+        
+        tbody.innerHTML = '';
+        res.data.forEach(r => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${escapeHtml(r.name)}</td>
+            <td><strong>${escapeHtml(r.session)}</strong></td>
+            <td>${escapeHtml(r.place)}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        tbody.innerHTML = `<tr><td colspan="3" class="empty-state">❌ خطأ في التحميل<br><small>${err.message}</small></td></tr>`;
       });
-      
-      tbody.innerHTML = '';
-      res.data.forEach(r => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${escapeHtml(r.name)}</td>
-          <td><strong>${escapeHtml(r.session)}</strong></td>
-          <td>${escapeHtml(r.place)}</td>
-        `;
-        tbody.appendChild(row);
-      });
-    })
-    .catch(err => {
-      console.error('Error:', err);
-      tbody.innerHTML = `<tr><td colspan="3" class="empty-state">❌ حدث خطأ في التحميل<br><small>${err.message}</small></td></tr>`;
-    });
   }
 
-  // حماية من XSS
   function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
@@ -636,14 +654,12 @@
     return div.innerHTML;
   }
 
-  // تسجيل Service Worker للـ PWA
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
       .then(reg => console.log('Service Worker registered:', reg))
       .catch(err => console.log('Service Worker registration failed:', err));
   }
 
-  // إغلاق Modal بزر ESC
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       closeModal();
