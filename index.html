@@ -11,15 +11,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-    
     body {
       font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #f5f7fa;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -29,294 +25,116 @@
     .app {
       background: #ffffff;
       width: 100%;
-      max-width: 450px;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      padding: 30px;
-      position: relative;
+      max-width: 420px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 20px;
     }
 
     header {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       font-weight: 700;
-      font-size: 15px;
-      line-height: 1.8;
-      color: #2c3e50;
-      border-bottom: 3px solid #3498db;
-      padding-bottom: 15px;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
     h1 {
       text-align: center;
-      font-size: 22px;
-      margin: 20px 0 25px;
+      font-size: 18px;
+      margin: 10px 0 20px;
       color: #2c3e50;
-      position: relative;
-    }
-
-    h1::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 4px;
-      background: #3498db;
-      border-radius: 2px;
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: 700;
+      margin-bottom: 6px;
+      font-weight: 600;
       font-size: 14px;
-      color: #34495e;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 12px 15px;
-      margin-bottom: 18px;
-      border-radius: 10px;
-      border: 2px solid #e0e0e0;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
       font-family: 'Cairo', sans-serif;
       font-size: 14px;
-      transition: all 0.3s ease;
-      background: #fafafa;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #3498db;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      box-sizing: border-box;
     }
 
     textarea {
       resize: vertical;
-      min-height: 80px;
+      min-height: 70px;
     }
 
     .buttons {
       display: flex;
-      gap: 12px;
-      margin-top: 25px;
+      gap: 10px;
     }
 
     button {
       flex: 1;
-      padding: 14px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 12px;
+      background: #1abc9c;
       color: #fff;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    }
-
-    button:active {
-      transform: translateY(0);
     }
 
     button.secondary {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+      background: #3498db;
     }
 
-    button.secondary:hover {
-      box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+    button:hover {
+      opacity: 0.9;
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-
-    #notification {
-      display: none;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      font-weight: 600;
-      text-align: center;
-      animation: slideDown 0.3s ease;
-    }
-
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .notification-success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-
-    .notification-error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-
-    .notification-warning {
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeaa7;
-    }
-
+    /* Modal */
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.5);
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
-      backdrop-filter: blur(5px);
     }
 
     .modal-content {
       background: #fff;
       width: 90%;
-      max-width: 500px;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-      animation: modalSlide 0.3s ease;
-    }
-
-    @keyframes modalSlide {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .modal-header {
-      text-align: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #ecf0f1;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-      color: #2c3e50;
-      font-size: 20px;
+      max-width: 400px;
+      border-radius: 14px;
+      padding: 15px;
     }
 
     table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      font-size: 14px;
-      margin-top: 15px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      text-align: center;
     }
 
     th {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 12px;
-      font-weight: 700;
-      text-align: center;
-    }
-
-    th:first-child {
-      border-radius: 0 10px 0 0;
-    }
-
-    th:last-child {
-      border-radius: 10px 0 0 0;
-    }
-
-    td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #ecf0f1;
-      background: #fafafa;
-    }
-
-    tr:hover td {
-      background: #e8f4f8;
-    }
-
-    .empty-state {
-      text-align: center;
-      color: #7f8c8d;
-      padding: 30px;
-      font-style: italic;
+      background: #f1f1f1;
     }
 
     .close-btn {
-      margin-top: 20px;
-      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
-      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4) !important;
+      margin-top: 10px;
+      background: #e74c3c;
     }
 
     #otherPlace {
       display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #3498db;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .required::after {
-      content: ' *';
-      color: #e74c3c;
-    }
-
-    @media (max-width: 480px) {
-      .app {
-        padding: 20px;
-      }
-      
-      header {
-        font-size: 13px;
-      }
-      
-      h1 {
-        font-size: 18px;
-      }
     }
   </style>
 </head>
@@ -333,52 +151,49 @@
 
   <h1>سجل الإنماء المهني</h1>
 
-  <div id="notification"></div>
+  <label>التاريخ</label>
+  <input type="date" id="date">
 
-  <label class="required">التاريخ</label>
-  <input type="date" id="date" required>
-
-  <label class="required">الحصة</label>
-  <select id="session" required>
-    <option value="">اختر الحصة</option>
-    <option value="الأولى">الأولى</option>
-    <option value="الثانية">الثانية</option>
-    <option value="الثالثة">الثالثة</option>
-    <option value="الرابعة">الرابعة</option>
-    <option value="الفسحة">الفسحة</option>
-    <option value="الخامسة">الخامسة</option>
-    <option value="السادسة">السادسة</option>
-    <option value="السابعة">السابعة</option>
-    <option value="الثامنة">الثامنة</option>
+  <label>الحصة</label>
+  <select id="session">
+    <option>الأولى</option>
+    <option>الثانية</option>
+    <option>الثالثة</option>
+    <option>الرابعة</option>
+    <option>الفسحة</option>
+    <option>الخامسة</option>
+    <option>السادسة</option>
+    <option>السابعة</option>
+    <option>الثامنة</option>
   </select>
 
-  <label class="required">اسم الموظف / المعلم</label>
-  <input type="text" id="name" required placeholder="أدخل الاسم الكامل">
+  <label>اسم الموظف / المعلم</label>
+  <input type="text" id="name">
 
-  <label class="required">المسمى الوظيفي</label>
-  <input type="text" id="job" required placeholder="مثال: معلم، مدير، مرشد">
+  <label>المسمى الوظيفي</label>
+  <input type="text" id="job">
 
-  <label class="required">الموضوع</label>
-  <input type="text" id="topic" required placeholder="موضوع النشاط أو البرنامج">
+  <label>الموضوع</label>
+  <input type="text" id="topic">
 
-  <label class="required">مكان التنفيذ</label>
-  <select id="placeSelect" onchange="toggleOtherPlace()" required>
+  <label>مكان التنفيذ</label>
+  <select id="placeSelect" onchange="toggleOtherPlace()">
     <option value="">اختر المكان</option>
-    <option value="قاعة العوتبي">قاعة العوتبي</option>
-    <option value="مختبر الحاسوب">مختبر الحاسوب</option>
-    <option value="قاعة المهارات الحياتية">قاعة المهارات الحياتية</option>
-    <option value="قاعة التوجيه المهني">قاعة التوجيه المهني</option>
-    <option value="مركز مصادر التعلم">مركز مصادر التعلم</option>
+    <option>قاعة العوتبي</option>
+    <option>مختبر الحاسوب</option>
+    <option>قاعة المهارات الحياتية</option>
+    <option>قاعة التوجيه المهني</option>
+    <option>مركز مصادر التعلم</option>
     <option value="other">أخرى</option>
   </select>
 
   <input type="text" id="otherPlace" placeholder="اكتب مكان التنفيذ">
 
   <label>الفئة المستهدفة</label>
-  <input type="text" id="target" placeholder="مثال: طلاب الصف العاشر">
+  <input type="text" id="target">
 
   <label>ملاحظات</label>
-  <textarea id="notes" placeholder="أي ملاحظات إضافية..."></textarea>
+  <textarea id="notes"></textarea>
 
   <div class="buttons">
     <button onclick="submitData()">تسجيل البيانات</button>
@@ -387,12 +202,10 @@
 
 </div>
 
-<div class="modal" id="modal" onclick="closeModalOutside(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      <h3>📅 حجوزات اليوم</h3>
-      <small id="todayDate" style="color: #7f8c8d;"></small>
-    </div>
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3 style="text-align:center">حجوزات اليوم</h3>
     <table>
       <thead>
         <tr>
@@ -402,7 +215,7 @@
         </tr>
       </thead>
       <tbody id="reservations">
-        <tr><td colspan="3" class="empty-state">⏳ جاري التحميل...</td></tr>
+        <tr><td colspan="3">جاري التحميل...</td></tr>
       </tbody>
     </table>
     <button class="close-btn" onclick="closeModal()">إغلاق</button>
@@ -410,165 +223,44 @@
 </div>
 
 <script>
-  // ⚠️ استبدل هذا الرابط برابطك الفعلي من Google Apps Script
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlmaxC_WeeuAR11VWGzsq6pMdAoXQY2RX79OfNRv-mx7ZRaGHt3JVjb1vAVefEMHJBgw/exec';
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('date').value = today;
-    
-    const todayDisplay = new Date().toLocaleDateString('ar-OM', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    document.getElementById('todayDate').textContent = todayDisplay;
-  });
 
   function toggleOtherPlace() {
     const select = document.getElementById('placeSelect');
     const other = document.getElementById('otherPlace');
-    const isOther = select.value === 'other';
-    
-    other.style.display = isOther ? 'block' : 'none';
-    other.required = isOther;
-    
-    if (!isOther) {
-      other.value = '';
-    }
-  }
-
-  function showNotification(message, type) {
-    const notif = document.getElementById('notification');
-    notif.className = `notification-${type}`;
-    notif.innerHTML = message;
-    notif.style.display = 'block';
-    
-    setTimeout(() => {
-      notif.style.display = 'none';
-    }, 5000);
-  }
-
-  function validateForm() {
-    const requiredFields = [
-      { id: 'date', name: 'التاريخ' },
-      { id: 'session', name: 'الحصة' },
-      { id: 'name', name: 'اسم الموظف' },
-      { id: 'job', name: 'المسمى الوظيفي' },
-      { id: 'topic', name: 'الموضوع' },
-      { id: 'placeSelect', name: 'مكان التنفيذ' }
-    ];
-
-    for (let field of requiredFields) {
-      const el = document.getElementById(field.id);
-      let value = el.value.trim();
-      
-      if (field.id === 'placeSelect' && value === 'other') {
-        const otherPlace = document.getElementById('otherPlace');
-        if (!otherPlace.value.trim()) {
-          showNotification(`⚠️ يرجى كتابة مكان التنفيذ في حقل "أخرى"`, 'warning');
-          otherPlace.focus();
-          return false;
-        }
-        continue;
-      }
-      
-      if (!value || value === '') {
-        showNotification(`⚠️ يرجى ملء حقل: ${field.name}`, 'warning');
-        el.focus();
-        return false;
-      }
-    }
-    
-    return true;
+    other.style.display = select.value === 'other' ? 'block' : 'none';
   }
 
   function submitData() {
-    if (!validateForm()) return;
-
     const placeSelect = document.getElementById('placeSelect');
-    let place = placeSelect.value;
-    
-    if (place === 'other') {
-      place = document.getElementById('otherPlace').value.trim();
-    }
+    const place = placeSelect.value === 'other'
+      ? document.getElementById('otherPlace').value
+      : placeSelect.value;
 
     const payload = {
       date: document.getElementById('date').value,
       session: document.getElementById('session').value,
-      name: document.getElementById('name').value.trim(),
-      job: document.getElementById('job').value.trim(),
-      topic: document.getElementById('topic').value.trim(),
+      name: document.getElementById('name').value,
+      job: document.getElementById('job').value,
+      topic: document.getElementById('topic').value,
       place: place,
-      target: document.getElementById('target').value.trim(),
-      notes: document.getElementById('notes').value.trim()
+      target: document.getElementById('target').value,
+      notes: document.getElementById('notes').value
     };
-
-    const confirmMessage = `هل أنت متأكد من حجز "${place}" في الحصة ${payload.session} بتاريخ ${payload.date}؟`;
-    if (!confirm(confirmMessage)) return;
-
-    const btn = document.querySelector('button[onclick="submitData()"]');
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.innerHTML = '⏳ جاري التسجيل...';
-
-    console.log('Sending:', payload);
 
     fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      body: JSON.stringify(payload)
     })
+    .then(res => res.json())
     .then(res => {
-      console.log('Response status:', res.status);
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-      return res.text();
-    })
-    .then(text => {
-      console.log('Raw response:', text);
-      
-      if (!text || text.trim() === '') {
-        throw new Error('Empty response from server');
-      }
-
-      let res;
-      try {
-        res = JSON.parse(text);
-      } catch (e) {
-        throw new Error('Invalid JSON: ' + text.substring(0, 100));
-      }
-
-      btn.disabled = false;
-      btn.textContent = originalText;
-
       if (res.conflict) {
-        showNotification(res.message, 'error');
+        alert(res.message);
       } else if (res.success) {
-        showNotification('✅ تم حفظ البيانات بنجاح!', 'success');
-        document.getElementById('session').value = '';
-        document.getElementById('name').value = '';
-        document.getElementById('job').value = '';
-        document.getElementById('topic').value = '';
-        document.getElementById('placeSelect').value = '';
-        document.getElementById('otherPlace').style.display = 'none';
-        document.getElementById('otherPlace').value = '';
-        document.getElementById('target').value = '';
-        document.getElementById('notes').value = '';
-      } else {
-        showNotification('❌ خطأ: ' + (res.error || 'غير معروف'), 'error');
+        alert('تم حفظ البيانات بنجاح');
       }
     })
-    .catch(err => {
-      console.error('Fetch error:', err);
-      btn.disabled = false;
-      btn.textContent = originalText;
-      showNotification('❌ فشل الاتصال: ' + err.message, 'error');
-    });
+    .catch(err => console.error(err));
   }
 
   function openModal() {
@@ -580,92 +272,38 @@
     document.getElementById('modal').style.display = 'none';
   }
 
-  function closeModalOutside(event) {
-    if (event.target.id === 'modal') {
-      closeModal();
-    }
-  }
-
   function loadTodayReservations() {
     const tbody = document.getElementById('reservations');
-    tbody.innerHTML = '<tr><td colspan="3" class="empty-state">⏳ جاري التحميل...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3">جاري التحميل...</td></tr>';
 
-    const url = `${SCRIPT_URL}?action=today`;
-    console.log('Fetching:', url);
-
-    fetch(url)
+    fetch(`${SCRIPT_URL}?action=today`)
+      .then(res => res.json())
       .then(res => {
-        console.log('Response status:', res.status);
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        }
-        return res.text();
-      })
-      .then(text => {
-        console.log('Raw response:', text);
-        
-        if (!text || text.trim() === '') {
-          throw new Error('Empty response from server');
-        }
-
-        let res;
-        try {
-          res = JSON.parse(text);
-        } catch (e) {
-          throw new Error('Invalid JSON: ' + text.substring(0, 100));
-        }
-        
-        if (!res.success) {
-          tbody.innerHTML = `<tr><td colspan="3" class="empty-state">❌ خطأ: ${res.error || 'غير معروف'}</td></tr>`;
+        if (!res.success || res.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3">لا توجد حجوزات اليوم</td></tr>';
           return;
         }
-        
-        if (!res.data || res.data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="3" class="empty-state">📭 لا توجد حجوزات لهذا اليوم</td></tr>';
-          return;
-        }
-        
-        const sessionOrder = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الفسحة', 'الخامسة', 'السادسة', 'السابعة', 'الثامنة'];
-        res.data.sort((a, b) => {
-          return sessionOrder.indexOf(a.session) - sessionOrder.indexOf(b.session);
-        });
-        
         tbody.innerHTML = '';
         res.data.forEach(r => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${escapeHtml(r.name)}</td>
-            <td><strong>${escapeHtml(r.session)}</strong></td>
-            <td>${escapeHtml(r.place)}</td>
-          `;
-          tbody.appendChild(row);
+          tbody.innerHTML += `<tr><td>${r.name}</td><td>${r.session}</td><td>${r.place}</td></tr>`;
         });
       })
       .catch(err => {
-        console.error('Error:', err);
-        tbody.innerHTML = `<tr><td colspan="3" class="empty-state">❌ خطأ في التحميل<br><small>${err.message}</small></td></tr>`;
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="3">حدث خطأ</td></tr>';
       });
   }
 
-  function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('Service Worker registered:', reg))
-      .catch(err => console.log('Service Worker registration failed:', err));
+    navigator.serviceWorker.register('sw.js');
   }
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeModal();
-    }
+</script>
+<script>
+  // تعبئة تاريخ اليوم تلقائيًا مع إمكانية التغيير
+  document.addEventListener('DOMContentLoaded', function () {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').value = today;
   });
 </script>
-
 </body>
 </html>
