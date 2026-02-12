@@ -4,79 +4,106 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>الإنماء المهني - مدرسة العوتبي</title>
-
+  
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-
+  
+  <!-- خط تجوال (Cairo) -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-
+  
   <style>
     body {
       font-family: 'Cairo', sans-serif;
-      background: #f5f7fa;
+      background: #f0f2f5;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      color: #333;
     }
 
     .app {
       background: #ffffff;
       width: 100%;
-      max-width: 420px;
+      max-width: 450px;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 25px;
+      box-sizing: border-box;
     }
 
     header {
       text-align: center;
-      margin-bottom: 20px;
-      font-weight: 700;
-      font-size: 14px;
-      line-height: 1.6;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #f0f2f5;
+      padding-bottom: 15px;
+    }
+
+    header h3 {
+      margin: 5px 0;
+      font-size: 16px;
+      color: #555;
+    }
+    
+    header h2 {
+        margin: 5px 0;
+        color: #1a5f7a;
+        font-size: 18px;
     }
 
     h1 {
       text-align: center;
-      font-size: 18px;
-      margin: 10px 0 20px;
+      font-size: 20px;
+      margin: 10px 0 25px;
       color: #2c3e50;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
     }
 
     label {
       display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
+      margin-bottom: 8px;
+      font-weight: 700;
       font-size: 14px;
+      color: #444;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
+      padding: 12px;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid #ddd;
       font-family: 'Cairo', sans-serif;
       font-size: 14px;
       box-sizing: border-box;
+      transition: border-color 0.3s;
+      background: #fafafa;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #1abc9c;
+      outline: none;
+      background: #fff;
     }
 
     textarea {
       resize: vertical;
-      min-height: 70px;
+      min-height: 80px;
     }
 
     .buttons {
       display: flex;
       gap: 10px;
+      margin-top: 20px;
     }
 
     button {
       flex: 1;
-      padding: 12px;
+      padding: 14px;
       background: #1abc9c;
       color: #fff;
       border: none;
@@ -84,24 +111,35 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #16a085;
+    }
+    
+    button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
     }
 
     button.secondary {
       background: #3498db;
     }
-
-    button:hover {
-      opacity: 0.9;
+    button.secondary:hover {
+      background: #2980b9;
     }
 
-    /* Modal */
+    /* Modal Styles */
     .modal {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       display: none;
       justify-content: center;
       align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(3px);
     }
 
     .modal-content {
@@ -109,32 +147,46 @@
       width: 90%;
       max-width: 400px;
       border-radius: 14px;
-      padding: 15px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
+      margin-top: 10px;
     }
 
     th, td {
-      border: 1px solid #ddd;
-      padding: 6px;
+      border: 1px solid #eee;
+      padding: 8px;
       text-align: center;
     }
 
     th {
-      background: #f1f1f1;
+      background: #f8f9fa;
+      color: #2c3e50;
     }
 
     .close-btn {
-      margin-top: 10px;
+      margin-top: 15px;
       background: #e74c3c;
+    }
+    .close-btn:hover {
+      background: #c0392b;
     }
 
     #otherPlace {
       display: none;
+      margin-top: 10px;
+    }
+    
+    .status-msg {
+        text-align: center;
+        font-size: 13px;
+        margin-top: 10px;
+        color: #666;
     }
   </style>
 </head>
@@ -142,70 +194,82 @@
 <body>
 
 <div class="app">
-
   <header>
-    <div>سلطنة عمان</div>
-    <div>وزارة التعليم</div>
-    <div>مدرسة العوتبي للتعليم الأساسي</div>
+    <h3>سلطنة عمان - وزارة التربية والتعليم</h3>
+    <h2>مدرسة العوتبي للتعليم الأساسي</h2>
   </header>
 
-  <h1>سجل الإنماء المهني</h1>
+  <h1>📝 سجل الإنماء المهني</h1>
 
-  <label>التاريخ</label>
-  <input type="date" id="date">
-
-  <label>الحصة</label>
-  <select id="session">
-    <option>الأولى</option>
-    <option>الثانية</option>
-    <option>الثالثة</option>
-    <option>الرابعة</option>
-    <option>الفسحة</option>
-    <option>الخامسة</option>
-    <option>السادسة</option>
-    <option>السابعة</option>
-    <option>الثامنة</option>
-  </select>
-
-  <label>اسم الموظف / المعلم</label>
-  <input type="text" id="name">
-
-  <label>المسمى الوظيفي</label>
-  <input type="text" id="job">
-
-  <label>الموضوع</label>
-  <input type="text" id="topic">
-
-  <label>مكان التنفيذ</label>
-  <select id="placeSelect" onchange="toggleOtherPlace()">
-    <option value="">اختر المكان</option>
-    <option>قاعة العوتبي</option>
-    <option>مختبر الحاسوب</option>
-    <option>قاعة المهارات الحياتية</option>
-    <option>قاعة التوجيه المهني</option>
-    <option>مركز مصادر التعلم</option>
-    <option value="other">أخرى</option>
-  </select>
-
-  <input type="text" id="otherPlace" placeholder="اكتب مكان التنفيذ">
-
-  <label>الفئة المستهدفة</label>
-  <input type="text" id="target">
-
-  <label>ملاحظات</label>
-  <textarea id="notes"></textarea>
-
-  <div class="buttons">
-    <button onclick="submitData()">تسجيل البيانات</button>
-    <button class="secondary" onclick="openModal()">حجوزات اليوم</button>
+  <div class="form-group">
+    <label>التاريخ</label>
+    <input type="date" id="date">
   </div>
 
+  <div class="form-group">
+    <label>الحصة</label>
+    <select id="session">
+      <option value="الأولى">الأولى</option>
+      <option value="الثانية">الثانية</option>
+      <option value="الثالثة">الثالثة</option>
+      <option value="الرابعة">الرابعة</option>
+      <option value="الفسحة">الفسحة</option>
+      <option value="الخامسة">الخامسة</option>
+      <option value="السادسة">السادسة</option>
+      <option value="السابعة">السابعة</option>
+      <option value="الثامنة">الثامنة</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>اسم الموظف / المعلم</label>
+    <input type="text" id="name" placeholder="الاسم الثلاثي">
+  </div>
+
+  <div class="form-group">
+    <label>المسمى الوظيفي</label>
+    <input type="text" id="job" placeholder="مثال: معلم لغة عربية">
+  </div>
+
+  <div class="form-group">
+    <label>الموضوع</label>
+    <input type="text" id="topic" placeholder="عنوان المشغل أو الورشة">
+  </div>
+
+  <div class="form-group">
+    <label>مكان التنفيذ</label>
+    <select id="placeSelect" onchange="toggleOtherPlace()">
+      <option value="">-- اختر المكان --</option>
+      <option value="قاعة العوتبي">قاعة العوتبي</option>
+      <option value="مختبر الحاسوب">مختبر الحاسوب</option>
+      <option value="قاعة المهارات الحياتية">قاعة المهارات الحياتية</option>
+      <option value="قاعة التوجيه المهني">قاعة التوجيه المهني</option>
+      <option value="مركز مصادر التعلم">مركز مصادر التعلم</option>
+      <option value="other">أخرى (حدد المكان)</option>
+    </select>
+    <input type="text" id="otherPlace" placeholder="اكتب اسم المكان هنا...">
+  </div>
+
+  <div class="form-group">
+    <label>الفئة المستهدفة</label>
+    <input type="text" id="target" placeholder="مثال: معلمو المجال الأول">
+  </div>
+
+  <div class="form-group">
+    <label>ملاحظات</label>
+    <textarea id="notes" placeholder="أي ملاحظات إضافية..."></textarea>
+  </div>
+
+  <div class="buttons">
+    <button id="submitBtn" onclick="submitData()">تسجيل البيانات</button>
+    <button class="secondary" onclick="openModal()">📅 حجوزات اليوم</button>
+  </div>
 </div>
 
 <!-- Modal -->
 <div class="modal" id="modal">
   <div class="modal-content">
-    <h3 style="text-align:center">حجوزات اليوم</h3>
+    <h3 style="text-align:center; color:#2c3e50;">حجوزات اليوم</h3>
     <table>
       <thead>
         <tr>
@@ -223,24 +287,38 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxlmaxC_WeeuAR11VWGzsq6pMdAoXQY2RX79OfNRv-mx7ZRaGHt3JVjb1vAVefEMHJBgw/exec';
+  // ⚠️⚠️ قم بلصق رابط السكربت الخاص بك هنا بين علامتي التنصيص
+  const SCRIPT_URL = 'ضع_رابط_السكربت_هنا';
 
   function toggleOtherPlace() {
     const select = document.getElementById('placeSelect');
     const other = document.getElementById('otherPlace');
     other.style.display = select.value === 'other' ? 'block' : 'none';
+    if(select.value === 'other') other.focus();
   }
 
   function submitData() {
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // التحقق من الحقول الإجبارية
+    const name = document.getElementById('name').value;
     const placeSelect = document.getElementById('placeSelect');
-    const place = placeSelect.value === 'other'
-      ? document.getElementById('otherPlace').value
-      : placeSelect.value;
+    const place = placeSelect.value === 'other' ? document.getElementById('otherPlace').value : placeSelect.value;
+    const date = document.getElementById('date').value;
+
+    if (!name || !place || !date) {
+      alert('⚠️ يرجى تعبئة التاريخ، الاسم، ومكان التنفيذ');
+      return;
+    }
+
+    // تغيير حالة الزر
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جاري الإرسال...';
 
     const payload = {
-      date: document.getElementById('date').value,
+      date: date,
       session: document.getElementById('session').value,
-      name: document.getElementById('name').value,
+      name: name,
       job: document.getElementById('job').value,
       topic: document.getElementById('topic').value,
       place: place,
@@ -251,16 +329,30 @@
     fetch(SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify(payload)
+      // ملاحظة: عدم وضع Headers يساعد في تجاوز مشاكل CORS في جوجل سكربت
     })
     .then(res => res.json())
     .then(res => {
       if (res.conflict) {
         alert(res.message);
       } else if (res.success) {
-        alert('تم حفظ البيانات بنجاح');
+        alert('✅ ' + res.message);
+        // تفريغ الحقول
+        document.getElementById('topic').value = '';
+        document.getElementById('notes').value = '';
+        document.getElementById('name').value = '';
+      } else {
+        alert('❌ حدث خطأ: ' + res.message);
       }
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+      console.error(err);
+      alert('❌ فشل الاتصال بالخادم، تأكد من الإنترنت أو الرابط.');
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'تسجيل البيانات';
+    });
   }
 
   function openModal() {
@@ -274,13 +366,13 @@
 
   function loadTodayReservations() {
     const tbody = document.getElementById('reservations');
-    tbody.innerHTML = '<tr><td colspan="3">جاري التحميل...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3">⏳ جاري جلب البيانات...</td></tr>';
 
     fetch(`${SCRIPT_URL}?action=today`)
       .then(res => res.json())
       .then(res => {
-        if (!res.success || res.data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="3">لا توجد حجوزات اليوم</td></tr>';
+        if (!res.success || !res.data || res.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3">لا توجد حجوزات لهذا اليوم</td></tr>';
           return;
         }
         tbody.innerHTML = '';
@@ -290,20 +382,30 @@
       })
       .catch(err => {
         console.error(err);
-        tbody.innerHTML = '<tr><td colspan="3">حدث خطأ</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3">❌ خطأ في الاتصال</td></tr>';
       });
   }
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
-<script>
-  // تعبئة تاريخ اليوم تلقائيًا مع إمكانية التغيير
+  // إعدادات أولية عند تحميل الصفحة
   document.addEventListener('DOMContentLoaded', function () {
+    // تعيين تاريخ اليوم تلقائياً
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('date').value = today;
+
+    // تسجيل Service Worker إذا كنت تستخدم PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(console.error);
+    }
   });
+
+  // إغلاق المودال عند النقر خارجه
+  window.onclick = function(event) {
+    const modal = document.getElementById('modal');
+    if (event.target == modal) {
+      closeModal();
+    }
+  }
 </script>
+
 </body>
 </html>
